@@ -36,7 +36,13 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      SizedBox(height: 75, width: 75, child: Image.asset("assets/empty.jpeg")),
+                      SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: ClipOval(
+                          child: Image.asset("assets/empty.jpeg", fit: BoxFit.fill),
+                        ),
+                      ),
                     ],
                   ),
                 ),

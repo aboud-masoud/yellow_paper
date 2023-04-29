@@ -32,7 +32,14 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Row(),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      SizedBox(height: 75, width: 75, child: Image.asset("assets/empty.jpeg")),
+                    ],
+                  ),
+                ),
               ),
             );
           }),

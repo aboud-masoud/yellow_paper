@@ -13,6 +13,29 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
       ),
+      body: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (ctx, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Row(),
+              ),
+            );
+          }),
     );
   }
 }

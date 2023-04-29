@@ -43,6 +43,16 @@ class HomeScreen extends StatelessWidget {
                           child: Image.asset("assets/empty.jpeg", fit: BoxFit.fill),
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text("Name : -------"),
+                          Text("Address : --------"),
+                          Text("Number : --------"),
+                        ],
+                      )
                     ],
                   ),
                 ),

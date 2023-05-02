@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "237109853041",
+    "project_id": "yellow-c7772",
+    "storage_bucket": "yellow-c7772.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237109853041:android:9761ad27bebecf596f54d0",
+        "android_client_info": {
+          "package_name": "com.example.yellow_paper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237109853041-03vclldqi64u4n84p8fbsspcp65a7nb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvH-dkp0Eh2USbrUoze6Y-5h91m9yv8Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237109853041-03vclldqi64u4n84p8fbsspcp65a7nb1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "237109853041-sn3lvd7hvtl9t9rb30u5pb1t887l4anb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.yellowPaper"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

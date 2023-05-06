@@ -11,109 +11,122 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final clients = FirebaseFirestore.instance.collection("clients");
   TextEditingController placeNameFieldController = TextEditingController();
-  TextEditingController placeImageUrlFieldController = TextEditingController();
-  TextEditingController placeAddressFieldController = TextEditingController();
   TextEditingController placeNumberFieldController = TextEditingController();
+  TextEditingController placeBillAmountFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Yellow Paper",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                addNewPlace();
-              },
-              icon: Icon(Icons.add))
-        ],
-      ),
-      body: StreamBuilder(
-          stream: clients.snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (ctx, index) {
-                    final data = snapshot.data!.docs[index];
+    return StreamBuilder(
+        stream: clients.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            double totalAmount = 0;
+            var myList = snapshot.data!.docs;
+            myList.sort((a, b) => a["name"].compareTo(b["name"]));
 
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text(
+                  "Yellow Paper",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        addNewPlace();
+                      },
+                      icon: const Icon(Icons.add))
+                ],
+              ),
+              body: ListView.builder(
+                  itemCount: myList.length + 1,
+                  itemBuilder: (ctx, index) {
+                    if (index == myList.length) {
+                      return Container(
                         height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3), // changes position of shadow
+                        child: Center(child: Text("Total Amount : $totalAmount ")),
+                      );
+                    } else {
+                      final data = myList[index];
+
+                      if (data["amount"] != "") {
+                        totalAmount = totalAmount + double.parse(data["amount"]);
+                      }
+
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: const Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.note),
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text("Name : ${data["name"]}"),
+                                        Text("Number : ${data["number"]}"),
+                                        Text("Amount : ${data["amount"]}"),
+                                      ],
+                                    ),
+                                    Expanded(child: Container()),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        InkWell(
+                                            onTap: () {
+                                              updateContact(data);
+                                            },
+                                            child: Icon(Icons.edit)),
+                                        InkWell(
+                                            onTap: () {
+                                              deleteContact(data.id);
+                                            },
+                                            child: Icon(Icons.delete)),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 75,
-                                height: 75,
-                                child: ClipOval(child: Image.network(data["imageUrl"], fit: BoxFit.fill)),
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text("Name : ${data["name"]}"),
-                                  Text("Address : ${data["addrress"]}"),
-                                  Text("Number : ${data["number"]}"),
-                                ],
-                              ),
-                              Expanded(child: Container()),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  InkWell(
-                                      onTap: () {
-                                        updateContact(data);
-                                      },
-                                      child: Icon(Icons.edit)),
-                                  InkWell(
-                                      onTap: () {
-                                        deleteContact(data.id);
-                                      },
-                                      child: Icon(Icons.delete)),
-                                ],
-                              )
-                            ],
                           ),
-                        ),
-                      ),
-                    );
-                  });
-            } else {
-              return CircularProgressIndicator();
-            }
-          }),
-    );
+                        ],
+                      );
+                    }
+                  }),
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 
-  deleteContact(String documentId) async {
-    await clients.doc(documentId).delete();
+  deleteContact(String documentId) {
+    clients.doc(documentId).delete();
   }
 
   updateContact(QueryDocumentSnapshot<Map<String, dynamic>> data) async {
     placeNameFieldController.text = data["name"];
-    placeImageUrlFieldController.text = data["imageUrl"];
-    placeAddressFieldController.text = data["addrress"];
     placeNumberFieldController.text = data["number"];
+    placeBillAmountFieldController.text = data["amount"];
 
     await showModalBottomSheet(
         context: context,
@@ -129,16 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: const InputDecoration(labelText: "Place Name"),
                 ),
                 TextField(
-                  controller: placeImageUrlFieldController,
-                  decoration: const InputDecoration(labelText: "Place Image URL"),
-                ),
-                TextField(
-                  controller: placeAddressFieldController,
-                  decoration: const InputDecoration(labelText: "Place Address"),
-                ),
-                TextField(
                   controller: placeNumberFieldController,
                   decoration: const InputDecoration(labelText: "Place Phone Number"),
+                ),
+                TextField(
+                  controller: placeBillAmountFieldController,
+                  decoration: const InputDecoration(labelText: "Place Amount"),
                 ),
                 Container(
                   height: 1,
@@ -148,14 +157,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () async {
                       await clients.doc(data.id).update({
                         "name": placeNameFieldController.text,
-                        "addrress": placeAddressFieldController.text,
                         "number": placeNumberFieldController.text,
-                        "imageUrl": placeImageUrlFieldController.text,
+                        "amount": placeBillAmountFieldController.text,
                       });
                       placeNameFieldController.text = "";
-                      placeAddressFieldController.text = "";
                       placeNumberFieldController.text = "";
-                      placeImageUrlFieldController.text = "";
+                      placeBillAmountFieldController.text = "";
 
                       Navigator.of(context).pop();
                     },
@@ -181,16 +188,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: const InputDecoration(labelText: "Place Name"),
                 ),
                 TextField(
-                  controller: placeImageUrlFieldController,
-                  decoration: const InputDecoration(labelText: "Place Image URL"),
-                ),
-                TextField(
-                  controller: placeAddressFieldController,
-                  decoration: const InputDecoration(labelText: "Place Address"),
-                ),
-                TextField(
                   controller: placeNumberFieldController,
                   decoration: const InputDecoration(labelText: "Place Phone Number"),
+                ),
+                TextField(
+                  controller: placeBillAmountFieldController,
+                  decoration: const InputDecoration(labelText: "Place Amount"),
                 ),
                 Container(
                   height: 1,
@@ -198,18 +201,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 TextButton(
                     onPressed: () async {
-                      await clients.add({
-                        "name": placeNameFieldController.text,
-                        "addrress": placeAddressFieldController.text,
-                        "number": placeNumberFieldController.text,
-                        "imageUrl": placeImageUrlFieldController.text,
-                      });
-                      placeNameFieldController.text = "";
-                      placeAddressFieldController.text = "";
-                      placeNumberFieldController.text = "";
-                      placeImageUrlFieldController.text = "";
+                      if (placeNameFieldController.text.isNotEmpty &&
+                          placeNumberFieldController.text.isNotEmpty &&
+                          placeBillAmountFieldController.text.isNotEmpty) {
+                        await clients.add({
+                          "name": placeNameFieldController.text,
+                          "number": placeNumberFieldController.text,
+                          "amount": placeBillAmountFieldController.text,
+                        });
+                        placeNameFieldController.text = "";
+                        placeNumberFieldController.text = "";
+                        placeBillAmountFieldController.text = "";
 
-                      Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      } else {
+                        print("some of the field is empty");
+                      }
                     },
                     child: const Text("Add New Place"))
               ],

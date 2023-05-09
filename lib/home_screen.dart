@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +14,8 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController placeNameFieldController = TextEditingController();
   TextEditingController placeNumberFieldController = TextEditingController();
   TextEditingController placeBillAmountFieldController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         addNewPlace();
                       },
-                      icon: const Icon(Icons.add))
+                      icon: const Icon(Icons.add)),
+                  TextButton(
+                    child: const Text(
+                      'Sign out',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      final user = _auth.currentUser;
+                      if (user == null) {
+//6
+                        print("No one has signed in.");
+                        return;
+                      }
+                      await _auth.signOut();
+                      final String uid = user.uid;
+                      print('$uid has successfully signed out.');
+                    },
+                  )
                 ],
               ),
               body: ListView.builder(

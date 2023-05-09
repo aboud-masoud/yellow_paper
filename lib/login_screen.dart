@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
           success = true;
           userEmail = user.email;
           Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-            return HomeScreen();
+            return const HomeScreen();
           }));
         });
       } else {
